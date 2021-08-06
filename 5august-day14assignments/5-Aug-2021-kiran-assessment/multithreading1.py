@@ -1,4 +1,5 @@
-import threading,time
+import threading,time,logging
+logging.basicconfig(filename='execution.log',level=logging.INFO)
 def Primenumbers():
     for num in range(2,500):
         time.sleep(2)
@@ -19,12 +20,17 @@ def Palindromenumbers():
             temp=temp//10
         if(num==reverse):
             print(num,end=' ')
+if(__name__=='__main__'):
 
 t1=threading.Thread(target=Primenumbers)
 t2=threading.Thread(target=Palindromenumbers)
 t1.start()
-t1.join()
-print("......")
 t2.start()
+t1.join()
 t2.join()
 print(".........")
+try:
+    logging.info("prime and palindrome numbers are printed")
+except:
+    logging.error("an unknown error occured")  
+
