@@ -7,7 +7,7 @@ students_list=[]
 new_list=[]
 class studentDetails:
     def addStudentDetails(self,name,rollno,standard,englishmarks,mathsmarks,socialmarks,sciencemark):
-        totalmarks=int(englishmarks),int(mathsmarks),int(socialmarks),int(sciencemarks)
+        totalmarks=int(englishmarks)+int(mathsmarks)+int(socialmarks)+int(sciencemarks)
         dict={"name":name,"rollno":rollno,"standard":standard,"englishmarks":englishmarks,"mathsmarks":mathsmarks,"socialmarks":socialmarks,"sciencemarks":sciencemarks,"totalmarks":totalmarks,"delflag":0}
         students_list.append(dict)
 obj=studentDetails()
@@ -15,27 +15,29 @@ obj=studentDetails()
 while(1):
     print("1.create studentlist:")
     print("2.view all  students details:")
-    print("3.search a student with class and rollno:")
-    print("4.update a student data and marks based on class and rollno:")
-    print("5.find avg marks of english based on class:")
-    print("5.delete a student based on rollno and class:")
-    print("6.Exit::")
+    print("3.search a student with std and rollno:")
+    print("4.update a student data and marks based on std and rollno:")
+    print("5.find avg marks of english based on std:")
+    print("6.delete a student based on rollno and std:")
+    print("6.Exit:")
     choice=int(input("Enter your choice:"))
     if choice==1:
         name=input("Enter student name:")
         rollno=input("Enter student rollno:")
-        standard=input("Enter student class:")
-        englishmarks=input("Enter student english marks:")
-        mathsmarks=input("Enter student maths marks:")
-        socialmarks=input("Enter student social marks:")
-        sciencemarks=input("Enter student science marks:")
+        standard=input("Enter student std:")
+        englishmarks=int(input("Enter student english marks:"))
+        mathsmarks=int(input("Enter student maths marks:"))
+        socialmarks=int(input("Enter student social marks:"))
+        sciencemarks=int(input("Enter student science marks:"))
        
         if validation(standard,rollno,englishmarks,mathsmarks,socialmarks,sciencemarks):
-            obj.addStudentDetails(name,rollno,standard,englishmarks,mathsmarks,socialmarks,sciencemarks,totalmarks)
+            obj.addStudentDetails(name,rollno,standard,englishmarks,mathsmarks,socialmarks,sciencemarks)
             result=collection_name.insert_many(students_list)
             print(result.inserted_ids)
+            students_list.clear()
         else:
             print("invalid details")
+            
     if choice==2:
         result=collection_name.find({"delflag":0})
         for i in result:
@@ -61,14 +63,14 @@ while(1):
 
     if choice==5:
         standard=input("Enter the class:")
-        result=collection_name.aggregate([{"$match":{"$standard":standard}},{"$group":{"_id":"$standard","avg":{"$avg":"$englishmarks"}}}])
+        result=collection_name.aggregate([{"$group":{"_id":"standard","avg":{"$avg":"$englishmarks"}}}])
         for i in result:
             print(i)
 
     if choice==6:
         rollno=input("enter the rollno:")
         std=input("enter the class:")
-        result=collection_name.update_one({"$and":[{"rollno":rollno,"standard":std}]},{"$set":{"delflag":1}})
+        result=collection_name.update_many({"$and":[{"rollno":rollno,"standard":std}]},{"$set":{"delflag":1}})
         print(result)
 
     if choice==7:
